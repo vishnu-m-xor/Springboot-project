@@ -13,12 +13,6 @@ pipeline {
 
     stages {
 
-        stage('Checkout') {
-            steps {
-                git 'https://github.com/vishnu-m-xor/Springboot-project.git'
-            }
-        }
-
         stage('Build & Test & Coverage') {
             steps {
                 sh 'mvn clean verify'
