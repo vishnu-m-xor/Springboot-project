@@ -8,7 +8,7 @@ pipeline {
 
     environment {
         APP_NAME = "springboot-project"
-        DEV_PORT = "8081"
+        DEV_PORT = "8084"
     }
 
     stages {
