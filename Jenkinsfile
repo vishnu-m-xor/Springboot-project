@@ -51,16 +51,20 @@ pipeline {
         stage('Deploy to DEV') {
             steps {
                 sh '''
-                echo "Stopping old application if running..."
-                pkill -f springboot-project || true
+                echo "Stopping application running on port ${DEV_PORT} (if any)..."
+                PID=$(lsof -t -i:${DEV_PORT}) || true
+                if [ -n "$PID" ]; then
+                kill -9 $PID
+                fi
 
                 echo "Starting application on DEV..."
-                nohup java -jar target/*.jar \
+                nohup java -jar target/EventManagementSystem-0.0.1-SNAPSHOT.jar \
                 --server.port=${DEV_PORT} \
                 > dev.log 2>&1 &
                 '''
             }
         }
+
 
         stage('Sanity Test') {
             steps {
