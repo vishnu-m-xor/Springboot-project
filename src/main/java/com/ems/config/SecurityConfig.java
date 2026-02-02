@@ -24,12 +24,22 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http
-            .cors(cors -> {})  // Use the CORS configuration from Configurations
-            .csrf(csrf -> csrf.disable())
+            .cors(cors -> {})
+            // H2 console needs CSRF disabled for its path
+            .csrf(csrf -> csrf
+                .ignoringRequestMatchers("/h2-console/**")
+            )
+            // Allow frames for H2 console
+            .headers(headers -> headers
+                .frameOptions(frame -> frame.sameOrigin())
+            )
             .sessionManagement(session ->
-                    session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .authorizeHttpRequests(auth -> auth
+
+                // H2 CONSOLE (DEV ONLY)
+                .requestMatchers("/h2-console/**").permitAll()
 
                 // PUBLIC
                 .requestMatchers(HttpMethod.POST, "/api/user/register").permitAll()
@@ -58,7 +68,6 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // REQUIRED for authentication
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration config) throws Exception {
