@@ -61,6 +61,7 @@ pipeline {
                 nohup java -jar target/EventManagementSystem-0.0.1-SNAPSHOT.jar \
                 --spring.profiles.active=dev \
                 --server.port=${DEV_PORT} \
+                --server.address=0.0.0.0 \
                 > dev.log 2>&1 &
                 '''
             }
@@ -72,7 +73,7 @@ pipeline {
                 sh '''
                 echo "Waiting for app to start..."
                 sleep 20
-                curl -f http://localhost:${DEV_PORT}/ || exit 1
+                curl -f http://localhost:${DEV_PORT}/h2-console || exit 1
                 '''
             }
         }
